@@ -4,6 +4,8 @@
 
 __version__ = "4.0.0"
 
+print('INFO: transformers', __version__, 'on mcsgpu')
+
 # Work around to update TensorFlow's absl.logging threshold which alters the
 # default Python logging output behavior when present.
 # see: https://github.com/abseil/abseil-py/issues/99
