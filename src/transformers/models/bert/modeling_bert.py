@@ -1379,10 +1379,12 @@ class BertForSequenceClassification(BertPreTrainedModel):
 ##############################################################################
 
 class BertForFactChecking(BertPreTrainedModel):
-    def __init__(self, config):
+    def __init__(self, config, similarity=None):
         super().__init__(config)
         self.num_labels = config.num_labels
 
+        self.similarity = similarity # subsystem for evaluating symmetry
+        
         self.bert = BertModel(config)
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
         self.classifier = nn.Linear(config.hidden_size, config.num_labels)
@@ -1406,7 +1408,7 @@ class BertForFactChecking(BertPreTrainedModel):
         inputs_embeds=None,
         labels=None,
         
-        evidence: list = None,
+        evidence=None, # b, |e|, max_length
         
         output_attentions=None,
         output_hidden_states=None,
@@ -1439,6 +1441,7 @@ class BertForFactChecking(BertPreTrainedModel):
 
         loss = None
         if labels is not None:
+            '''if labels are given then compute loss'''
             if self.num_labels == 1:
                 #  We are doing regression
                 loss_fct = MSELoss()
